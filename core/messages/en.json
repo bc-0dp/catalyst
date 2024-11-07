@@ -122,7 +122,11 @@
   "Category": {
     "sortBy": "{items, plural, =0 {no items} =1 {1 item} other {# items}}",
     "products": "Products",
-    "items": "items"
+    "items": "items",
+    "Empty": {
+      "message": "No products in this category",
+      "cta": "Return to Home"
+    }
   },
   "Search": {
     "title": "Search results",
@@ -149,6 +153,7 @@
       "title": "Addresses",
       "addNewAddress": "Add new address",
       "editButton": "Edit",
+      "emptyAddresses": "No addresses added",
       "deleteButton": "Delete",
       "confirmDeleteAddress": "Delete address",
       "deleteModalTitle": "Are you sure you want to delete this address?",
@@ -199,7 +204,7 @@
       "changePassword": "Change password",
       "submit": "Update settings",
       "submitting": "Update settings...",
-      "successMessage": "Dear {firstName} {lastName}, you successfully updated your account data",
+      "successMessage": "Your account settings have been updated",
       "validationMessages": {
           "email": "Enter a valid email such as name@domain.com",
           "empty": "This field can not be empty",

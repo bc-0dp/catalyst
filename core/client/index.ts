@@ -7,7 +7,7 @@ import { getChannelIdFromLocale } from '~/channels.config';
 import { backendUserAgent } from '../userAgent';
 
 export const client = createClient({
-  customerImpersonationToken: process.env.BIGCOMMERCE_CUSTOMER_IMPERSONATION_TOKEN ?? '',
+  storefrontToken: process.env.BIGCOMMERCE_STOREFRONT_TOKEN ?? '',
   xAuthToken: process.env.BIGCOMMERCE_ACCESS_TOKEN ?? '',
   storeHash: process.env.BIGCOMMERCE_STORE_HASH ?? '',
   channelId: process.env.BIGCOMMERCE_CHANNEL_ID,
@@ -23,7 +23,7 @@ export const client = createClient({
      * - Requests in middlewares
      * - Requests in `generateStaticParams`
      * - Request in api routes
-     * - Requests in static sites without `unstable_setRequestLocale`
+     * - Requests in static sites without `setRequestLocale`
      *
      * We use the default channelId as a fallback, but it is not ideal in some scenarios.
      *  */

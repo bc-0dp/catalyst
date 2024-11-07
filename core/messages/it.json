@@ -45,8 +45,8 @@
             "createLink": "Crea account "
         },
         "ForgotPassword": {
-            "title": "Forgot password",
-            "heading": "Forgot password",
+            "title": "Password dimenticata",
+            "heading": "Password dimenticata",
             "Form": {
                 "description": "Inserisci di seguito l'e-mail associata al tuo account. Ti invieremo le istruzioni per reimpostare la password.",
                 "emailLabel": "E-mail",
@@ -122,7 +122,11 @@
     "Category": {
         "sortBy": "{items, plural, =0 {nessun articolo} =1 {1 articolo} other {# articoli}}",
         "products": "Prodotti",
-        "items": "articoli"
+        "items": "articoli",
+        "Empty": {
+            "message": "Non sono presenti prodotti in questa categoria",
+            "cta": "Ritorna alla Homepage"
+        }
     },
     "Search": {
         "title": "Risultati della ricerca",
@@ -149,6 +153,7 @@
             "title": "Indirizzi",
             "addNewAddress": "Aggiungi un nuovo indirizzo",
             "editButton": "Modifica",
+            "emptyAddresses": "Nessun indirizzo è stato aggiunto",
             "deleteButton": "Elimina",
             "confirmDeleteAddress": "Cancella indirizzo",
             "deleteModalTitle": "Vuoi davvero eliminare questo indirizzo?",
@@ -199,7 +204,7 @@
             "changePassword": "Cambia password",
             "submit": "AGGIORNA IMPOSTAZIONI",
             "submitting": "Aggiorna impostazioni...",
-            "successMessage": "Gentile {firstName} {lastName}, hai aggiornato con successo i dati del tuo account",
+            "successMessage": "Your account settings have been updated",
             "validationMessages": {
                 "email": "Inserisci un indirizzo e-mail valido, ad esempio nome@dominio.com",
                 "empty": "Questo campo non può essere vuoto",

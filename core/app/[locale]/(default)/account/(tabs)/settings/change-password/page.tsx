@@ -1,6 +1,6 @@
-import { getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 
-import { locales, LocaleType } from '~/i18n/routing';
+import { LocaleType } from '~/i18n/routing';
 
 import { TabHeading } from '../../_components/tab-heading';
 
@@ -21,7 +21,7 @@ interface Props {
 }
 
 export default function ChangePassword({ params: { locale } }: Props) {
-  unstable_setRequestLocale(locale);
+  setRequestLocale(locale);
 
   return (
     <>
@@ -33,8 +33,4 @@ export default function ChangePassword({ params: { locale } }: Props) {
   );
 }
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
-
-export const dynamic = 'force-static';
+export const runtime = 'edge';

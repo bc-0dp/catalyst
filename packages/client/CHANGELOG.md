@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.12.0
+
+### Minor Changes
+
+- [#1262](https://github.com/bigcommerce/catalyst/pull/1262) [`0c2023b`](https://github.com/bigcommerce/catalyst/commit/0c2023bae650039cd79ba51b1161b5c8c16f0b8d) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Removes all usages of the customer impersonation token. Also updates the docs to correspond with the Storefront API Token.
+
+- [#1262](https://github.com/bigcommerce/catalyst/pull/1262) [`0c2023b`](https://github.com/bigcommerce/catalyst/commit/0c2023bae650039cd79ba51b1161b5c8c16f0b8d) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Allows the ability to consume a [storefront token](https://developer.bigcommerce.com/docs/rest-authentication/tokens#storefront-tokens). This new token will allow Catalyst to create `customerAccessToken`'s whenever a user logs into their account. This change doesn't include consuming the either token, only adding the ability to pass it in.
+
+## 0.11.0
+
+### Minor Changes
+
+- [#1483](https://github.com/bigcommerce/catalyst/pull/1483) [`d4120d3`](https://github.com/bigcommerce/catalyst/commit/d4120d39c10398e842a7ebe14ada685ec8aae3a8) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Start collecting telemetry.
+
+## 0.10.0
+
+### Minor Changes
+
+- [#1449](https://github.com/bigcommerce/catalyst/pull/1449) [`2d1526a`](https://github.com/bigcommerce/catalyst/commit/2d1526a50402b2eb677abd55f19fb904234d1a84) Thanks [@bookernath](https://github.com/bookernath)! - Support Trusted Proxy in client to support higher-traffic stores
+
+## 0.9.0
+
+### Minor Changes
+
+- [#1384](https://github.com/bigcommerce/catalyst/pull/1384) [`17692ca`](https://github.com/bigcommerce/catalyst/commit/17692caa3ff9b25180359d8a020470ece3e589f6) Thanks [@chanceaclark](https://github.com/chanceaclark)! - Add the ability to hook into the fetchOptions before the request is sent.
+
 ## 0.8.0
 
 ### Minor Changes
