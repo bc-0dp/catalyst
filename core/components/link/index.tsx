@@ -57,7 +57,7 @@ export const Link = forwardRef<ComponentRef<'a'>, Props>(
         href={href}
         onMouseEnter={prefetch === 'hover' ? triggerPrefetch : undefined}
         onTouchStart={prefetch === 'hover' ? triggerPrefetch : undefined}
-        prefetch={computedPrefetch}
+        prefetch={true}
         ref={ref}
         {...rest}
       >
