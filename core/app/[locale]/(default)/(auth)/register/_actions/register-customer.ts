@@ -206,7 +206,7 @@ export async function registerCustomer<F extends Field>(
         input,
         // ...(recaptchaToken && { reCaptchaV2: { token: recaptchaToken } }),
       },
-      fetchOptions: doNotCachePolicy,
+      fetchOptions: doNotCachePolicy(),
     });
 
     if (response.errors != null && response.errors.length > 0) {

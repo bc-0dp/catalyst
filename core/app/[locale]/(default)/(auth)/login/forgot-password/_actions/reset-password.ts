@@ -50,7 +50,7 @@ export const resetPassword = async (
         },
         // ...(reCaptchaToken && { reCaptchaV2: { token: reCaptchaToken } }),
       },
-      fetchOptions: doNotCachePolicy,
+      fetchOptions: doNotCachePolicy(),
     });
 
     const result = response.data.customer.requestResetPassword;

@@ -25,7 +25,7 @@ export const getBrand = cache(async (variables: Variables) => {
   const response = await client.fetch({
     document: BrandQuery,
     variables,
-    fetchOptions: anonymousCachePolicy,
+    fetchOptions: anonymousCachePolicy(),
   });
 
   return response.data.site.brand;

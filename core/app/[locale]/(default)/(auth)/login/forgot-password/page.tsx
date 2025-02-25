@@ -38,7 +38,7 @@ export default async function Reset() {
   // TODO: add recaptcha token
   // const { data } = await client.fetch({
   //   document: ResetPageQuery,
-  //   fetchOptions: anonymousCachePolicy,
+  //   fetchOptions: anonymousCachePolicy(),
   // });
   // const recaptchaSettings = await bypassReCaptcha(data.site.settings?.reCaptcha);
 

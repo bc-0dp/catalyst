@@ -36,7 +36,8 @@ async function getFeaturedProducts(): Promise<CarouselProduct[]> {
   const { data } = await client.fetch({
     document: NotFoundQuery,
     variables: { currencyCode },
-    fetchOptions: anonymousCachePolicy,
+    // This is an anonymous version of featured products for the not found page
+    fetchOptions: anonymousCachePolicy(),
   });
 
   const featuredProducts = removeEdgesAndNodes(data.site.featuredProducts);

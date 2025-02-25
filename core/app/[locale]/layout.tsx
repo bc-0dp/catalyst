@@ -38,7 +38,7 @@ const RootLayoutMetadataQuery = graphql(`
 export async function generateMetadata(): Promise<Metadata> {
   const { data } = await client.fetch({
     document: RootLayoutMetadataQuery,
-    fetchOptions: anonymousCachePolicy,
+    fetchOptions: anonymousCachePolicy(),
   });
 
   const storeName = data.site.settings?.storeName ?? '';

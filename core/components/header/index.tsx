@@ -7,8 +7,7 @@ import { LayoutQuery } from '~/app/[locale]/(default)/query';
 import { getSessionCustomerAccessToken } from '~/auth';
 import { client } from '~/client';
 import { graphql, readFragment } from '~/client/graphql';
-import { revalidate } from '~/client/cache-policy';
-import { TAGS } from "~/client/cache-policy";
+import { revalidate, doNotCachePolicyWithEntityTags, TAGS } from '~/client/cache-policy';
 import { logoTransformer } from '~/data-transformers/logo-transformer';
 import { routing } from '~/i18n/routing';
 import { getCartId } from '~/lib/cart';
@@ -86,12 +85,7 @@ const getCartCount = async () => {
     document: GetCartCountQuery,
     variables: { cartId },
     customerAccessToken,
-    fetchOptions: {
-      cache: 'no-store',
-      next: {
-        tags: [TAGS.cart],
-      },
-    },
+    fetchOptions: doNotCachePolicyWithEntityTags({ entityType: TAGS.cart }),
   });
 
   if (!response.data.site.cart) {
