@@ -7,7 +7,7 @@ import { LayoutQuery } from '~/app/[locale]/(default)/query';
 import { getSessionCustomerAccessToken } from '~/auth';
 import { client } from '~/client';
 import { graphql, readFragment } from '~/client/graphql';
-import { revalidate, doNotCachePolicyWithEntityTags, TAGS } from '~/client/cache-policy';
+import { revalidate, doNotCachePolicyWithEntityTags, TAGS, shopperCachePolicy } from '~/client/cache-policy';
 import { logoTransformer } from '~/data-transformers/logo-transformer';
 import { routing } from '~/i18n/routing';
 import { getCartId } from '~/lib/cart';
@@ -37,7 +37,7 @@ const getLayoutData = cache(async () => {
   const { data: response } = await client.fetch({
     document: LayoutQuery,
     customerAccessToken,
-    fetchOptions: customerAccessToken ? { cache: 'no-store' } : { next: { revalidate } },
+    fetchOptions: shopperCachePolicy(customerAccessToken, undefined, true),
   });
 
   return readFragment(HeaderFragment, response).site;
