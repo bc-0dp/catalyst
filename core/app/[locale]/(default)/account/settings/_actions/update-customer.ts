@@ -10,7 +10,7 @@ import { UpdateAccountAction } from '@/vibes/soul/sections/account-settings-sect
 import { getSessionCustomerAccessToken } from '~/auth';
 import { client } from '~/client';
 import { graphql } from '~/client/graphql';
-import { TAGS } from '~/client/tags';
+import { TAGS } from "~/client/cache-policy";
 
 const UpdateCustomerMutation = graphql(`
   mutation UpdateCustomerMutation($input: UpdateCustomerInput!) {

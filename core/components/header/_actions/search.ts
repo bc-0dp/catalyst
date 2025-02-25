@@ -10,7 +10,7 @@ import { SearchResult } from '@/vibes/soul/primitives/navigation';
 import { getSessionCustomerAccessToken } from '~/auth';
 import { client } from '~/client';
 import { graphql } from '~/client/graphql';
-import { revalidate } from '~/client/revalidate-target';
+import { revalidate } from '~/client/cache-policy';
 import { searchResultsTransformer } from '~/data-transformers/search-results-transformer';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 

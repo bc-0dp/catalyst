@@ -5,7 +5,7 @@ import { getSessionCustomerAccessToken } from '~/auth';
 import { client } from '~/client';
 import { PaginationFragment } from '~/client/fragments/pagination';
 import { graphql } from '~/client/graphql';
-import { TAGS } from '~/client/tags';
+import { TAGS } from "~/client/cache-policy";
 import {
   FormFieldsFragment,
   FormFieldValuesFragment,

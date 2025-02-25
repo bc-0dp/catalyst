@@ -5,7 +5,7 @@ import { revalidateTag } from 'next/cache';
 import { getSessionCustomerAccessToken } from '~/auth';
 import { client } from '~/client';
 import { graphql, VariablesOf } from '~/client/graphql';
-import { TAGS } from '~/client/tags';
+import { TAGS } from "~/client/cache-policy";
 
 const ApplyCheckoutCouponMutation = graphql(`
   mutation ApplyCheckoutCouponMutation($applyCheckoutCouponInput: ApplyCheckoutCouponInput!) {

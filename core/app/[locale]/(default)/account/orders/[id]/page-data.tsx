@@ -4,7 +4,7 @@ import { cache } from 'react';
 import { getSessionCustomerAccessToken } from '~/auth';
 import { client } from '~/client';
 import { graphql } from '~/client/graphql';
-import { TAGS } from '~/client/tags';
+import { TAGS } from "~/client/cache-policy";
 
 import { OrderItemFragment } from '../fragment';
 

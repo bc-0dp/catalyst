@@ -14,7 +14,7 @@ import { LayoutQuery } from '~/app/[locale]/(default)/query';
 import { getSessionCustomerAccessToken } from '~/auth';
 import { client } from '~/client';
 import { readFragment } from '~/client/graphql';
-import { revalidate } from '~/client/revalidate-target';
+import { revalidate } from '~/client/cache-policy';
 import { logoTransformer } from '~/data-transformers/logo-transformer';
 
 import { FooterFragment } from './fragment';

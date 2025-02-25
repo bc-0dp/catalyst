@@ -4,7 +4,7 @@ import { getSessionCustomerAccessToken } from '~/auth';
 
 import { client } from '..';
 import { graphql } from '../graphql';
-import { TAGS } from '../tags';
+import { TAGS } from "../cache-policy";
 
 const MoneyFieldFragment = graphql(`
   fragment MoneyFieldFragment on Money {
