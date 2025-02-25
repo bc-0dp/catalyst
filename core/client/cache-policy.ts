@@ -75,7 +75,7 @@ export const doNotCachePolicyWithEntityTags = ({ entityType, entityId, channelId
 export const doNotCachePolicy = (channelId?: string) => doNotCachePolicyWithEntityTags({ channelId });
 
 /**
- * Shopper cache policies for fetching data that is cacheable for guests, but not for logged in shoppers
+ * Shopper cache policies for fetching data that is cacheable for guests, but not for logged in customers
  * 
  * Use this strategy for data that may change once a shopper logs in such as Customer Group-based data
  */
@@ -85,8 +85,12 @@ export const shopperCachePolicyWithEntityTags = ({
   entityType,
   entityId,
   channelId,
-}: GetTagsProps & { customerAccessToken: string | undefined }) => {
-  if (customerAccessToken) {
+  cacheForCustomer = false,
+}: GetTagsProps & { 
+  customerAccessToken: string | undefined,
+  cacheForCustomer?: boolean 
+}) => {
+  if (customerAccessToken && !cacheForCustomer) {
     // No-store by default to limit Data Cache writes 
     // as the expected hit rate is low
     return doNotCachePolicyWithEntityTags({ entityType, entityId, channelId });
@@ -95,5 +99,13 @@ export const shopperCachePolicyWithEntityTags = ({
   return anonymousCachePolicyWithEntityTags({ entityType, entityId, channelId });
 };
 
-export const shopperCachePolicy = (customerAccessToken: string | undefined, channelId?: string) =>
-  shopperCachePolicyWithEntityTags({ customerAccessToken, channelId });
+export const shopperCachePolicy = (
+  customerAccessToken: string | undefined, 
+  channelId?: string,
+  cacheForCustomer?: boolean
+) =>
+  shopperCachePolicyWithEntityTags({ 
+    customerAccessToken, 
+    channelId, 
+    cacheForCustomer 
+  });
