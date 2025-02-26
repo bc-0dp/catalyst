@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.15.0
+
+### Minor Changes
+
+- [#1914](https://github.com/bigcommerce/catalyst/pull/1914) [`f039b2c`](https://github.com/bigcommerce/catalyst/commit/f039b2c7235118626d7a727bff5271ac8982f910) Thanks [@jorgemoya](https://github.com/jorgemoya)! - GQL requests that respond as `200` but have an `errors` field will now be properly handled by the client and throw a proper `BigCommerceGQLError` response with the message reason from the API. This will provide a more detailed description of why the GQL request errored out.
+
+  API errors will still be handled and attribute the errored status as the message with this change as `BigCommerceAPIError`.
+
+### Patch Changes
+
+- [#1933](https://github.com/bigcommerce/catalyst/pull/1933) [`f292236`](https://github.com/bigcommerce/catalyst/commit/f2922366ba94572293856cc7f2532dade0847c86) Thanks [@dependabot](https://github.com/apps/dependabot)! - Manual changes on a dependency bumps.
+
 ## 0.14.0
 
 ### Minor Changes

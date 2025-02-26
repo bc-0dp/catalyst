@@ -1,5 +1,80 @@
 # Changelog
 
+## 1.0.0
+
+### Major Changes
+
+- [#1852](https://github.com/bigcommerce/catalyst/pull/1852) [`6b17bdb`](https://github.com/bigcommerce/catalyst/commit/6b17bdb7493d8c0b518662dd522ae2ea5d6a65b5) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Introduce Soul VIBE UI library to the repository.
+
+  - Added a collection of reusable primitives with modern styles
+  - Prebuilt sections and page templates that are easy to use
+  - Fast performance and modern patterns leveraging the latest features of Next.js
+  - Easy customization to best represent your brand
+  - Utilize @conform-to/react for progressively enhanced HTML forms
+
+  Join the discussion [here](https://github.com/bigcommerce/catalyst/discussions/1861) for more details of this major milestone for Catalyst!
+
+### Minor Changes
+
+- [#1912](https://github.com/bigcommerce/catalyst/pull/1912) [`da2a462`](https://github.com/bigcommerce/catalyst/commit/da2a4624c806470047856a91be9987d924c82b54) Thanks [@bookernath](https://github.com/bookernath)! - Add currency selector to header
+
+- [#1914](https://github.com/bigcommerce/catalyst/pull/1914) [`f039b2c`](https://github.com/bigcommerce/catalyst/commit/f039b2c7235118626d7a727bff5271ac8982f910) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Properly handle `BigCommerceGQLError` in actions, by returning the error messages from the request.
+
+- [#1933](https://github.com/bigcommerce/catalyst/pull/1933) [`f292236`](https://github.com/bigcommerce/catalyst/commit/f2922366ba94572293856cc7f2532dade0847c86) Thanks [@dependabot](https://github.com/apps/dependabot)! - Manual changes on a dependency bumps.
+
+- [#1923](https://github.com/bigcommerce/catalyst/pull/1923) [`62b891c`](https://github.com/bigcommerce/catalyst/commit/62b891cd6582a43a8f56b39f68d3db7314d7ae1d) Thanks [@jordanarldt](https://github.com/jordanarldt)! - Adds support for nested web page children / trees. Restructure web page routing to support a layout file.
+
+### Patch Changes
+
+- [#1905](https://github.com/bigcommerce/catalyst/pull/1905) [`d70596e`](https://github.com/bigcommerce/catalyst/commit/d70596ef1e0f1667830652a6cf4c73f042479672) Thanks [@apledger](https://github.com/apledger)! - Fixes types for signIn credentials and improves error handling for registering a customer.
+
+- [#1917](https://github.com/bigcommerce/catalyst/pull/1917) [`83ac205`](https://github.com/bigcommerce/catalyst/commit/83ac20580c3aa138c0048e9cabb3d8ff1ef873a2) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Add result type to all `generateMetadata`.
+
+- [#1944](https://github.com/bigcommerce/catalyst/pull/1944) [`c5ce9dc`](https://github.com/bigcommerce/catalyst/commit/c5ce9dc8089d1048459ba87113716b146cde84c3) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Properly handle the auth error when login is invalid.
+
+- [#1928](https://github.com/bigcommerce/catalyst/pull/1928) [`157ea54`](https://github.com/bigcommerce/catalyst/commit/157ea54581b16bc6b88de9846972b548b14079cc) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Rename some GQL query/mutations/fragments to standardized naming.
+
+- [#1977](https://github.com/bigcommerce/catalyst/pull/1977) [`39f479f`](https://github.com/bigcommerce/catalyst/commit/39f479f6d869269372837e793ab2aef183c1de9d) Thanks [@jordanarldt](https://github.com/jordanarldt)! - Add persistent cart support
+
+- [#1955](https://github.com/bigcommerce/catalyst/pull/1955) [`d921070`](https://github.com/bigcommerce/catalyst/commit/d92107036528ccb6eeb5bcd038bbecc87991c7d0) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Add discounts summary item to Cart.
+
+- [#1975](https://github.com/bigcommerce/catalyst/pull/1975) [`aecc145`](https://github.com/bigcommerce/catalyst/commit/aecc145f7a1cd4c7a0309076e2cfe819491a1771) Thanks [@agurtovoy](https://github.com/agurtovoy)! - fix: localized home page routes are rewritten to the "catch all" page
+
+- [#1927](https://github.com/bigcommerce/catalyst/pull/1927) [`43351ab`](https://github.com/bigcommerce/catalyst/commit/43351ab176dfd8e8587402d5247bbb26edf95d86) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Pass in currency code to quick search results.
+
+- [#1990](https://github.com/bigcommerce/catalyst/pull/1990) [`c4e56c6`](https://github.com/bigcommerce/catalyst/commit/c4e56c67757d417e444a877afde818ea38e72b81) Thanks [@agurtovoy](https://github.com/agurtovoy)! - fix: switching locales redirects user to the home page
+
+- [#1908](https://github.com/bigcommerce/catalyst/pull/1908) [`aade48a`](https://github.com/bigcommerce/catalyst/commit/aade48af7196aa5e54c6dddb30dd942785392805) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Remove explicit locale override in Link component that was appending default locale to links even with the 'as-needed' mode.
+
+- [#1884](https://github.com/bigcommerce/catalyst/pull/1884) [`11ecddf`](https://github.com/bigcommerce/catalyst/commit/11ecddf48d77a745f3b46a6343e725624d3dcaea) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Use `setRequestLocale` only where needed
+
+- [#1931](https://github.com/bigcommerce/catalyst/pull/1931) [`c70bff2`](https://github.com/bigcommerce/catalyst/commit/c70bff2017f84e23b7701a30bba41e192b5ddc44) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Dedupe requests in "webpages" by properly caching/memoizing the fetch function per page render.
+
+- [#1941](https://github.com/bigcommerce/catalyst/pull/1941) [`0098c6b`](https://github.com/bigcommerce/catalyst/commit/0098c6b359bc296870c953c8092520d71f68075f) Thanks [@bookernath](https://github.com/bookernath)! - Set currency on cart at creation time
+
+- [#1979](https://github.com/bigcommerce/catalyst/pull/1979) [`267a5ff`](https://github.com/bigcommerce/catalyst/commit/267a5ff8f8cc3698877b02e05df501c7d63e04e7) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Add coupon code form to Cart page.
+
+- [#1913](https://github.com/bigcommerce/catalyst/pull/1913) [`1cead1d`](https://github.com/bigcommerce/catalyst/commit/1cead1d47437fd735bd26d98a641d3b684c03b3c) Thanks [@apledger](https://github.com/apledger)! - Applied streamable pattern to Cart.
+
+- [#1937](https://github.com/bigcommerce/catalyst/pull/1937) [`54ee390`](https://github.com/bigcommerce/catalyst/commit/54ee390fecb89b63cea8cdb101254389a36019ad) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Remove unecessary `fetchOptions` in object that has nothing to do with a client request.
+
+- [#1993](https://github.com/bigcommerce/catalyst/pull/1993) [`802ccdf`](https://github.com/bigcommerce/catalyst/commit/802ccdfd5e7c1eddc3ec6bcc170cd90aff09580e) Thanks [@bc-svc-local](https://github.com/bc-svc-local)! - Update translations.
+
+- [#1935](https://github.com/bigcommerce/catalyst/pull/1935) [`aa9ac48`](https://github.com/bigcommerce/catalyst/commit/aa9ac481f52002de41e13d0b739b0591a94f7c7c) Thanks [@bc-svc-local](https://github.com/bc-svc-local)! - Update translations.
+
+- [#1921](https://github.com/bigcommerce/catalyst/pull/1921) [`ee42e45`](https://github.com/bigcommerce/catalyst/commit/ee42e4574da4b22401f692ffe4acff4169e86b9c) Thanks [@bc-svc-local](https://github.com/bc-svc-local)! - Update translations.
+
+- [#1949](https://github.com/bigcommerce/catalyst/pull/1949) [`81af460`](https://github.com/bigcommerce/catalyst/commit/81af460c6a8faad2630defb2c5cd46f0451e9b2d) Thanks [@bc-svc-local](https://github.com/bc-svc-local)! - Update translations.
+
+- [#1902](https://github.com/bigcommerce/catalyst/pull/1902) [`775eed6`](https://github.com/bigcommerce/catalyst/commit/775eed6b9fa4f50525f60ec95d37a251d670166f) Thanks [@bc-svc-local](https://github.com/bc-svc-local)! - Update translations.
+
+- [#1927](https://github.com/bigcommerce/catalyst/pull/1927) [`43351ab`](https://github.com/bigcommerce/catalyst/commit/43351ab176dfd8e8587402d5247bbb26edf95d86) Thanks [@jorgemoya](https://github.com/jorgemoya)! - Dedupe requests in various pages by properly caching/memoizing the function per page render.
+
+- [#1954](https://github.com/bigcommerce/catalyst/pull/1954) [`51fef1e`](https://github.com/bigcommerce/catalyst/commit/51fef1e7d88611e54892b2fbfdf255be7075e542) Thanks [@fikrikarim](https://github.com/fikrikarim)! - Disable prefetch for the `/logout` link.
+
+- Updated dependencies [[`f039b2c`](https://github.com/bigcommerce/catalyst/commit/f039b2c7235118626d7a727bff5271ac8982f910), [`f292236`](https://github.com/bigcommerce/catalyst/commit/f2922366ba94572293856cc7f2532dade0847c86)]:
+  - @bigcommerce/catalyst-client@0.15.0
+
 ## 0.24.1
 
 ### Patch Changes
