@@ -25,3 +25,11 @@ export async function clearCartId(): Promise<void> {
 
   cookieStore.delete('cartId');
 }
+
+// 1. Get the cart content
+// 2. Clear the cart content and clear the cookie
+// 3. Create a new cart for the region and set the cookie
+// 4. Add the cart content to the new cart
+export async function migrateCartToNewRegion(): Promise<void> {
+    todo();
+}
