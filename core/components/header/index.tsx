@@ -18,7 +18,7 @@ import { search } from './_actions/search';
 import { switchCurrency } from './_actions/switch-currency';
 import { switchLocale } from './_actions/switch-locale';
 import { switchRegion } from './_actions/switch-region';
-import { regions, defaultRegion } from '~/regions.config';
+import { regions, getRegionById } from '~/regions.config';
 
 import { HeaderFragment } from './fragment';
 
@@ -126,7 +126,7 @@ const getCurrencies = async () => {
 export const Header = async () => {
   const cookieStore = await cookies();
   const regionCookie = await cookieStore.get('region');
-  const region = regionCookie?.value ?? defaultRegion;
+  const region = regionCookie?.value;
 
   const t = await getTranslations('Components.Header');
   const locale = await getLocale();

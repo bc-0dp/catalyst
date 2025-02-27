@@ -1,11 +1,11 @@
 import { type MiddlewareFactory } from './compose-middlewares';
-import { getChannelIdFromRegion, defaultRegion } from '~/regions.config';
+import { getChannelIdFromRegion } from '~/regions.config';
 
 export const withRegionChannel: MiddlewareFactory = (next) => {
   return (request, event) => {
     // Get region from cookie
     const regionCookie = request.cookies.get('region');
-    const region = regionCookie?.value ?? defaultRegion;
+    const region = regionCookie?.value;
 
     // Get channel ID based on region
     const channelId = getChannelIdFromRegion(region);
