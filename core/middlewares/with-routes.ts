@@ -220,6 +220,7 @@ const getRouteInfo = async (request: NextRequest, event: NextFetchEvent) => {
   const locale = request.headers.get('x-bc-locale') ?? '';
   const channelId = request.headers.get('x-bc-channel-id') ?? '';
 
+    // console.log(`Channel ID: ${channelId}`);
   try {
     const pathname = clearLocaleFromPath(request.nextUrl.pathname, locale);
 

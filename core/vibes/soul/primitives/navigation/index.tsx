@@ -4,6 +4,7 @@ import { SubmissionResult, useForm } from '@conform-to/react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import * as Popover from '@radix-ui/react-popover';
+import { useRouter } from 'next/navigation';
 import { clsx } from 'clsx';
 import debounce from 'lodash.debounce';
 import { ArrowRight, ChevronDown, Search, SearchIcon, ShoppingBag, User } from 'lucide-react';
@@ -48,6 +49,12 @@ interface Locale {
 }
 
 interface Currency {
+  id: string;
+  label: string;
+}
+
+// Add this interface with the existing interfaces
+interface Region {
   id: string;
   label: string;
 }
@@ -119,6 +126,9 @@ interface Props<S extends SearchResult> {
   openSearchPopupLabel?: string;
   searchLabel?: string;
   mobileMenuTriggerLabel?: string;
+  regions?: Region[];
+  activeRegionId?: string;
+  regionAction?: Action<SubmissionResult | null, FormData>;
 }
 
 const MobileMenuButton = forwardRef<
@@ -286,6 +296,9 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
     openSearchPopupLabel = 'Open search popup',
     searchLabel = 'Search',
     mobileMenuTriggerLabel = 'Toggle navigation',
+    regions,
+    activeRegionId,
+    regionAction,
   }: Props<S>,
   ref: Ref<HTMLDivElement>,
 ) {
@@ -562,6 +575,15 @@ export const Navigation = forwardRef(function Navigation<S extends SearchResult>
               }
             </Stream>
           </Link>
+
+          {/* Region switcher */}
+          {regions && regions.length > 1 && (
+            <RegionSwitcher
+              regions={regions}
+              activeRegionId={activeRegionId}
+              action={regionAction}
+            />
+          )}
 
           {/* Locale / Language Dropdown */}
           {locales && locales.length > 1 && localeAction ? (
@@ -933,6 +955,69 @@ function CurrencyForm({
               }}
             >
               {currency.label}
+            </DropdownMenu.Item>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
+  );
+}
+
+function RegionSwitcher({
+  regions,
+  activeRegionId,
+  action,
+}: {
+  regions: Region[];
+  activeRegionId?: string;
+  action: Action<SubmissionResult | null, FormData>;
+}) {
+  const activeRegion = regions.find((region) => region.id === activeRegionId) ?? regions[0];
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleRegionChange = (regionId: string) => {
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.append('region', regionId);
+
+    action(formData).then(() => {
+      setIsSubmitting(false);
+      startTransition(() => {
+        router.refresh();
+      });
+    });
+  };
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger
+        className={clsx('flex items-center gap-1 text-xs uppercase', navButtonClassName)}
+      >
+        {activeRegion?.label || regions[0]?.label}
+        <ChevronDown size={16} strokeWidth={1.5} />
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align="end"
+          className="z-50 max-h-80 overflow-y-scroll rounded-xl bg-[var(--nav-locale-background,hsl(var(--background)))] p-2 shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 @4xl:w-32 @4xl:rounded-2xl @4xl:p-2"
+          sideOffset={16}
+        >
+          {regions.map((region) => (
+            <DropdownMenu.Item
+              className={clsx(
+                'cursor-default rounded-lg bg-[var(--nav-locale-link-background,transparent)] px-2.5 py-2 font-[family-name:var(--nav-locale-link-font-family,var(--font-family-body))] text-sm font-medium text-[var(--nav-locale-link-text,hsl(var(--contrast-400)))] outline-none ring-[var(--nav-focus,hsl(var(--primary)))] transition-colors hover:bg-[var(--nav-locale-link-background-hover,hsl(var(--contrast-100)))] hover:text-[var(--nav-locale-link-text-hover,hsl(var(--foreground)))]',
+                {
+                  'text-[var(--nav-locale-link-text-selected,hsl(var(--foreground)))]':
+                    region.id === activeRegionId,
+                },
+              )}
+              key={region.id}
+              onSelect={() => handleRegionChange(region.id)}
+            >
+              {region.label}
             </DropdownMenu.Item>
           ))}
         </DropdownMenu.Content>

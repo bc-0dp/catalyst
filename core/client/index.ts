@@ -1,8 +1,10 @@
 import { createClient } from '@bigcommerce/catalyst-client';
-import { headers } from 'next/headers';
+import { headers, cookies } from 'next/headers';
 import { getLocale as getServerLocale } from 'next-intl/server';
 
 import { getChannelIdFromLocale } from '../channels.config';
+import { getChannelIdFromRegion } from '../regions.config';
+
 import { backendUserAgent } from '../userAgent';
 
 const getLocale = async () => {
@@ -33,10 +35,31 @@ export const client = createClient({
     (process.env.NODE_ENV !== 'production' && process.env.CLIENT_LOGGER !== 'false') ||
     process.env.CLIENT_LOGGER === 'true',
   getChannelId: async (defaultChannelId: string) => {
-    const locale = await getLocale();
+    try {
+      // First try to get channelId from region cookie
+      const cookieStore = await cookies();
+      const regionCookie = await cookieStore.get('region');
+      const region = regionCookie?.value;
 
-    // We use the default channelId as a fallback, but it is not ideal in some scenarios.
-    return getChannelIdFromLocale(locale) ?? defaultChannelId;
+      if (region) {
+        const channelId = getChannelIdFromRegion(region);
+        if (channelId) return channelId;
+      }
+
+      // Then try to get channelId from locale
+      const locale = await getLocale();
+      const localeChannelId = getChannelIdFromLocale(locale);
+
+      if (localeChannelId) {
+        return localeChannelId;
+      }
+
+      // Fall back to default channelId
+      return defaultChannelId;
+    } catch (error) {
+      console.error('Error getting channelId:', error);
+      return defaultChannelId;
+    }
   },
   beforeRequest: async (fetchOptions) => {
     // We can't serialize a `Headers` object within this method so we have to opt into using a plain object
@@ -54,6 +77,22 @@ export const client = createClient({
 
     if (locale) {
       requestHeaders['Accept-Language'] = locale;
+    }
+
+    // Add the region-based channelId to the request headers
+    try {
+      const cookieStore = await cookies();
+      const regionCookie = await cookieStore.get('region');
+      const region = regionCookie?.value;
+
+      if (region) {
+        const channelId = getChannelIdFromRegion(region);
+        if (channelId) {
+          requestHeaders['x-bc-channel-id'] = channelId;
+        }
+      }
+    } catch (error) {
+      console.error('Error setting x-bc-channel-id header:', error);
     }
 
     return {

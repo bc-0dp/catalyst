@@ -1,6 +1,7 @@
 import { composeMiddlewares } from './middlewares/compose-middlewares';
 import { withAuth } from './middlewares/with-auth';
-import { withChannelId } from './middlewares/with-channel-id';
+// import { withChannelId } from './middlewares/with-channel-id';
+import {withRegionChannel} from './middlewares/with-region';
 import { withIntl } from './middlewares/with-intl';
 import { withMakeswift } from './middlewares/with-makeswift';
 import { withRoutes } from './middlewares/with-routes';
@@ -9,7 +10,7 @@ export const middleware = composeMiddlewares(
   withAuth,
   withMakeswift,
   withIntl,
-  withChannelId,
+  withRegionChannel,
   withRoutes,
 );
 

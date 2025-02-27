@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from 'next-intl/server';
 import PLazy from 'p-lazy';
 import { cache } from 'react';
-
+import { cookies } from 'next/headers';
 import { LayoutQuery } from '~/app/[locale]/(default)/query';
 import { getSessionCustomerAccessToken } from '~/auth';
 import { client } from '~/client';
@@ -17,6 +17,9 @@ import { SiteHeader as HeaderSection } from '~/lib/makeswift/components/site-hea
 import { search } from './_actions/search';
 import { switchCurrency } from './_actions/switch-currency';
 import { switchLocale } from './_actions/switch-locale';
+import { switchRegion } from './_actions/switch-region';
+import { regions, defaultRegion } from '~/regions.config';
+
 import { HeaderFragment } from './fragment';
 
 const GetCartCountQuery = graphql(`
@@ -121,6 +124,10 @@ const getCurrencies = async () => {
 };
 
 export const Header = async () => {
+  const cookieStore = await cookies();
+  const regionCookie = await cookieStore.get('region');
+  const region = regionCookie?.value ?? defaultRegion;
+
   const t = await getTranslations('Components.Header');
   const locale = await getLocale();
   const currencyCode = await getPreferredCurrencyCode();
@@ -129,6 +136,8 @@ export const Header = async () => {
     id: enabledLocales,
     label: enabledLocales.toLocaleUpperCase(),
   }));
+
+
 
   const currencies = await getCurrencies();
   const defaultCurrency = currencies.find(({ isDefault }) => isDefault);
@@ -157,6 +166,10 @@ export const Header = async () => {
         currencies,
         activeCurrencyId,
         currencyAction: switchCurrency,
+        // Add region switcher options
+        activeRegionId: region,
+        regions,
+        regionAction: switchRegion,
       }}
     />
   );
