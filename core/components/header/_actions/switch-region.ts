@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
-import { migrateCartToNewRegion } from '~/lib/cart';
+// import { migrateCartToNewRegion } from '~/lib/cart';
 import { getRegionById } from '~/regions.config';
 
 export async function switchRegion(formData: FormData) {
@@ -20,7 +20,7 @@ export async function switchRegion(formData: FormData) {
   });
   
   // Migrate cart to new region
-  await migrateCartToNewRegion();
+//   await migrateCartToNewRegion();
     
   revalidatePath('/');
 }

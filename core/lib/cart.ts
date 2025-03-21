@@ -6,14 +6,14 @@ import { createCart } from '~/client/mutations/create-cart';
 import { getCart } from '~/client/queries/get-cart';
 
 export async function getCartId(): Promise<string | undefined> {
-  const cookieStore = cookies();
-  const cartId = cookieStore.get('cartId')?.value;
+  const cookieStore = await cookies();
+  const cartId = await cookieStore.get('cartId')?.value;
   return cartId;
 }
 
 export async function setCartId(cartId: string): Promise<void> {
-  const cookieStore = cookies();
-  cookieStore.set('cartId', cartId, {
+  const cookieStore = await cookies();
+  await cookieStore.set('cartId', cartId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -22,8 +22,8 @@ export async function setCartId(cartId: string): Promise<void> {
 }
 
 export async function clearCartId(): Promise<void> {
-  const cookieStore = cookies();
-  cookieStore.delete('cartId');
+  const cookieStore = await cookies();
+  await cookieStore.delete('cartId');
 }
 
 export async function migrateCartToNewRegion(): Promise<void> {
