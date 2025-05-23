@@ -2,11 +2,19 @@ import { createNavigation } from 'next-intl/navigation';
 import { defineRouting } from 'next-intl/routing';
 
 import { buildConfig } from '~/build-config/reader';
+import { getDefaultRegion } from '~/regions.config';
 
-const localeNodes = buildConfig.get('locales');
+// Get default region from regions.config.ts
+const defaultRegionId = getDefaultRegion().id;
 
+// Get locales for the default region
+const regionLocales = buildConfig.get('regionLocales')?.[defaultRegionId];
+
+// Extract locale information
+const localeNodes = regionLocales?.locales || [{ code: 'en', isDefault: true }];
 export const locales = localeNodes.map((locale) => locale.code);
-export const defaultLocale = localeNodes.find((locale) => locale.isDefault)?.code ?? 'en';
+export const defaultLocale =
+  regionLocales?.defaultLocale || localeNodes.find((locale) => locale.isDefault)?.code || 'en';
 
 interface LocaleEntry {
   id: string;
@@ -14,7 +22,6 @@ interface LocaleEntry {
   region: string;
   flag: string;
 }
-
 /**
  * Custom map of locale to language and region.
  * Temporary solution until we have a better way to include regions for all locales.

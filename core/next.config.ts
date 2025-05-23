@@ -3,28 +3,16 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-import { writeBuildConfig } from './build-config/writer';
-import { client } from './client';
-import { graphql } from './client/graphql';
+import { fetchRegionLocales, writeBuildConfig } from './build-config/writer';
 import { cspHeader } from './lib/content-security-policy';
 
 const withMakeswift = createWithMakeswift({ previewMode: false });
 const withNextIntl = createNextIntlPlugin();
 
-const LocaleQuery = graphql(`
-  query LocaleQuery {
-    site {
-      settings {
-        locales {
-          code
-          isDefault
-        }
-      }
-    }
-  }
-`);
-
 export default async (): Promise<NextConfig> => {
+  // First, fetch and write region locales to build config
+  await buildRegionLocales();
+
   let nextConfig: NextConfig = {
     reactStrictMode: true,
     experimental: {
@@ -68,17 +56,36 @@ export default async (): Promise<NextConfig> => {
 
   if (process.env.ANALYZE === 'true') {
     const withBundleAnalyzer = bundleAnalyzer();
-
     nextConfig = withBundleAnalyzer(nextConfig);
   }
-
-  await writeLocaleToBuildConfig();
 
   return nextConfig;
 };
 
-async function writeLocaleToBuildConfig() {
-  const { data } = await client.fetch({ document: LocaleQuery });
+/**
+ * Builds the region-specific locale configuration
+ * This runs during Next.js build process to create a build-config.json file
+ * with locales for each configured region
+ */
+async function buildRegionLocales() {
+  console.log('Fetching locales for all regions...');
 
-  await writeBuildConfig({ locales: data.site.settings?.locales });
+  try {
+    // Fetch locales for all regions
+    const regionLocales = await fetchRegionLocales();
+
+    // Write only the region-specific locales, no backwards compatibility
+    await writeBuildConfig({
+      regionLocales,
+      // No more locales array
+    });
+
+    console.log('Region locales successfully written to build-config.json');
+  } catch (error) {
+    console.error('Failed to build region locales:', error);
+    // Fallback to empty configuration
+    await writeBuildConfig({
+      regionLocales: {},
+    });
+  }
 }

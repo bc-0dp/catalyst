@@ -13,12 +13,15 @@ import { routing } from '~/i18n/routing';
 import { getCartId } from '~/lib/cart';
 import { getPreferredCurrencyCode } from '~/lib/currency';
 import { SiteHeader as HeaderSection } from '~/lib/makeswift/components/site-header/site-header';
+import { localeLanguageRegionMap } from '~/i18n/routing';
 
 import { search } from './_actions/search';
 import { switchCurrency } from './_actions/switch-currency';
 import { switchLocale } from './_actions/switch-locale';
 import { switchRegion } from './_actions/switch-region';
-import { regions, getRegionById } from '~/regions.config';
+import { regions, getRegionById, getDefaultRegion } from '~/regions.config';
+import { buildConfig } from '~/build-config/reader';
+
 
 import { HeaderFragment } from './fragment';
 
@@ -126,18 +129,26 @@ const getCurrencies = async () => {
 export const Header = async () => {
   const cookieStore = await cookies();
   const regionCookie = await cookieStore.get('region');
-  const region = regionCookie?.value;
+  const regionId = regionCookie?.value || getDefaultRegion().id;
 
   const t = await getTranslations('Components.Header');
   const locale = await getLocale();
   const currencyCode = await getPreferredCurrencyCode();
 
-  const locales = routing.locales.map((enabledLocales) => ({
-    id: enabledLocales,
-    label: enabledLocales.toLocaleUpperCase(),
-  }));
+  // Get locales specific to the current region
+  const regionLocales = buildConfig.get('regionLocales')?.[regionId];
 
+  // Only use locales available for this region
+  const locales = regionLocales?.locales
+    ? regionLocales.locales.map((regionLocale) => ({
+        id: regionLocale.code,
+        label: regionLocale.code.toLocaleUpperCase(),
+      }))
+    : [];
 
+  console.log(
+    `Region: ${regionId}, Available locales: ${JSON.stringify(locales.map((l) => l.id))}`,
+  );
 
   const currencies = await getCurrencies();
   const defaultCurrency = currencies.find(({ isDefault }) => isDefault);
@@ -167,7 +178,7 @@ export const Header = async () => {
         activeCurrencyId,
         currencyAction: switchCurrency,
         // Add region switcher options
-        activeRegionId: region,
+        activeRegionId: regionId,
         regions,
         regionAction: switchRegion,
       }}
