@@ -14,6 +14,7 @@ import '../../globals.css';
 import { fonts } from '~/app/fonts';
 import { CookieNotifications } from '~/app/notifications';
 import { Providers } from '~/app/providers';
+import { B2BLoader } from '~/b2b/loader';
 import { client } from '~/client';
 import { graphql } from '~/client/graphql';
 import { revalidate } from '~/client/revalidate-target';
@@ -122,6 +123,7 @@ export default async function RootLayout({ params, children }: Props) {
         <body className="flex min-h-screen flex-col">
           <NextIntlClientProvider>
             <NuqsAdapter>
+              <B2BLoader />
               <AnalyticsProvider channelId={data.channel.entityId} settings={data.site.settings}>
                 <Providers>
                   {toastNotificationCookieData && (

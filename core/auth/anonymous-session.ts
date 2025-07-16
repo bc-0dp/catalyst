@@ -11,7 +11,7 @@ const shouldUseSecureCookie = async () => {
 };
 
 export const anonymousSignIn = async (user: Partial<AnonymousUser> = { cartId: null }) => {
-  const secret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
+  const secret = process.env.AUTH_SECRET ?? process.env.AUTH_SECRET;
   const useSecureCookies = await shouldUseSecureCookie();
   const cookiePrefix = useSecureCookies ? '__Secure-' : '';
 
@@ -48,7 +48,7 @@ export const getAnonymousSession = async () => {
     return null;
   }
 
-  const secret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
+  const secret = process.env.AUTH_SECRET ?? process.env.AUTH_SECRET;
 
   if (!secret) {
     throw new Error('AUTH_SECRET is not set');
@@ -69,6 +69,12 @@ export const clearAnonymousSession = async () => {
   const cookiePrefix = useSecureCookies ? '__Secure-' : '';
 
   cookieJar.delete(`${cookiePrefix}${anonymousCookieName}`);
+  cookieJar.delete({
+    name: `${cookiePrefix}${anonymousCookieName}`,
+    secure: true,
+    sameSite: 'lax',
+    httpOnly: true,
+  });
 };
 
 export const updateAnonymousSession = async (user: AnonymousUser) => {

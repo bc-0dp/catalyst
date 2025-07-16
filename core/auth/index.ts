@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import { z } from 'zod';
 
 import { anonymousSignIn, clearAnonymousSession } from '~/auth/anonymous-session';
+import { loginWithB2B } from '~/b2b/client';
 import { client } from '~/client';
 import { graphql } from '~/client/graphql';
 import { clearCartId, setCartId } from '~/lib/cart';
@@ -16,6 +17,7 @@ const LoginMutation = graphql(`
     login(email: $email, password: $password, guestCartEntityId: $cartEntityId) {
       customerAccessToken {
         value
+        expiresAt
       }
       customer {
         entityId
@@ -35,6 +37,7 @@ const LoginWithTokenMutation = graphql(`
     loginWithCustomerLoginJwt(jwt: $jwt, guestCartEntityId: $cartEntityId) {
       customerAccessToken {
         value
+        expiresAt
       }
       customer {
         entityId
@@ -124,6 +127,12 @@ async function loginWithPassword(credentials: unknown): Promise<User | null> {
   }
 
   await handleLoginCart(cartId, result.cart?.entityId);
+
+  const b2bToken = await loginWithB2B({
+    customerId: result.customer.entityId,
+    customerAccessToken: result.customerAccessToken,
+  });
+
   await clearAnonymousSession();
 
   return {
@@ -131,6 +140,7 @@ async function loginWithPassword(credentials: unknown): Promise<User | null> {
     email: result.customer.email,
     customerAccessToken: result.customerAccessToken.value,
     cartId: result.cart?.entityId,
+    b2bToken,
   };
 }
 
@@ -160,6 +170,12 @@ async function loginWithJwt(credentials: unknown): Promise<User | null> {
   }
 
   await handleLoginCart(cartId, result.cart?.entityId);
+
+  const b2bToken = await loginWithB2B({
+    customerId: result.customer.entityId,
+    customerAccessToken: result.customerAccessToken,
+  });
+
   await clearAnonymousSession();
 
   return {
@@ -168,18 +184,9 @@ async function loginWithJwt(credentials: unknown): Promise<User | null> {
     customerAccessToken: result.customerAccessToken.value,
     impersonatorId,
     cartId: result.cart?.entityId,
+    b2bToken,
   };
 }
-
-const partitionedCookie = (name?: string) =>
-  ({
-    ...(name !== undefined ? { name } : {}),
-    options: {
-      partitioned: true,
-      secure: true,
-      sameSite: 'none',
-    },
-  }) as const;
 
 const config = {
   // Explicitly setting this value to be undefined. We want the library to handle CSRF checks when taking sensitive actions.
@@ -205,6 +212,12 @@ const config = {
           ...token.user,
           customerAccessToken: user.customerAccessToken,
         };
+      }
+
+      // user can actually be undefined
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (user?.b2bToken) {
+        token.b2bToken = user.b2bToken;
       }
 
       // user can actually be undefined
@@ -236,6 +249,10 @@ const config = {
 
       if (token.user?.cartId !== undefined) {
         session.user.cartId = token.user.cartId;
+      }
+
+      if (token.b2bToken) {
+        session.b2bToken = token.b2bToken;
       }
 
       return session;
@@ -298,16 +315,6 @@ const config = {
       authorize: loginWithJwt,
     }),
   ],
-  // configure NextAuth cookies to work inside of the Makeswift Builder's canvas
-  cookies: {
-    sessionToken: partitionedCookie(),
-    callbackUrl: partitionedCookie(),
-    csrfToken: partitionedCookie(),
-    pkceCodeVerifier: partitionedCookie(),
-    state: partitionedCookie(),
-    nonce: partitionedCookie(),
-    webauthnChallenge: partitionedCookie(),
-  },
 } satisfies NextAuthConfig;
 
 export const { handlers, auth, signIn, signOut, unstable_update: updateSession } = NextAuth(config);
