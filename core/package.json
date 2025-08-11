@@ -11,8 +11,9 @@
     "node": ">=24.0.0"
   },
   "scripts": {
-    "dev": "npm run generate && next dev",
+    "dev": "npm run generate && npm run generate:b2b && next dev",
     "generate": "dotenv -e .env.local -- node ./scripts/generate.cjs",
+    "generate:b2b": "dotenv -e .env.local -- node ./features/b2b/scripts/generate.js",
     "build": "npm run generate && next build",
     "build:analyze": "ANALYZE=true npm run build",
     "start": "next start",
