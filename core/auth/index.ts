@@ -12,7 +12,6 @@ import { graphql } from '~/client/graphql';
 import { clearCartId, setCartId } from '~/lib/cart';
 import { serverToast } from '~/lib/server-toast';
 
-// B2B Login Function
 const loginWithB2B = async ({
   customerId,
   customerAccessToken,
