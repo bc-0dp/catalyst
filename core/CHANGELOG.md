@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1
+
+### Patch Changes
+
+- [#2526](https://github.com/bigcommerce/catalyst/pull/2526) [`2089a58`](https://github.com/bigcommerce/catalyst/commit/2089a58f6bdaeab68a014ad66422932f392e6c46) Thanks [@chanceaclark](https://github.com/chanceaclark)! - The anonymous session cookie had `secure` always set to true regardless if we were prefixing it or not. This change updates the cookie to set `secure` to the same "value" if we prefix the cookie with `__Secure-`.
+
+- [#2521](https://github.com/bigcommerce/catalyst/pull/2521) [`6f6a8af`](https://github.com/bigcommerce/catalyst/commit/6f6a8af4fd7a5754b9d08aef75c4e40ab3057318) Thanks [@bookernath](https://github.com/bookernath)! - Preconnect to checkout domain on cart page to improve checkout load time
+
 ## 1.1.0
 
 ### Minor Changes
