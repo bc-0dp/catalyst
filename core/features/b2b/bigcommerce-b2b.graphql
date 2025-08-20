@@ -1160,6 +1160,25 @@ type Query {
     """Is product or variant"""
     isProduct: Boolean
   ): ProductPurchasableType
+  validateProduct(
+    """Product ID"""
+    productId: Int!
+
+    """Variant ID"""
+    variantId: Int!
+
+    """Quantity"""
+    quantity: Int!
+
+    """Product options list"""
+    productOptions: [GenericScalar]
+
+    """Store hash"""
+    storeHash: String
+
+    """Channel ID"""
+    channelId: Int
+  ): ValidateProductType
 
   """
   Calculate batch pricing for products for a specific channel, currency, and customer group.
@@ -4200,6 +4219,16 @@ type ProductPurchasableType {
 
   """The purchasing disabled of variant"""
   purchasingDisabled: Boolean
+}
+
+type ValidateProductType {
+  """
+  The type of response returned. Possible values are SUCCESS, WARNING, or ERROR.
+  """
+  responseType: String
+
+  """The message returned if the product is not valid."""
+  message: String
 }
 
 type PricingProductType {

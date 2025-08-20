@@ -12,11 +12,31 @@ import { graphql } from '~/client/graphql';
 import { clearCartId, setCartId } from '~/lib/cart';
 import { serverToast } from '~/lib/server-toast';
 
+// B2B Login Function
+const loginWithB2B = async ({
+  customerId,
+  customerAccessToken,
+}: {
+  customerId: number;
+  customerAccessToken: { value: string; expiresAt: string };
+}) => {
+  if (process.env.B2B_ENABLED !== 'true') return null;
+
+  try {
+    const { b2bClient } = await import('~/features/b2b/client');
+    return await b2bClient.loginWithB2B({ customerId, customerAccessToken });
+  } catch (error) {
+    console.error('🚨 [B2B LOGIN] Failed:', error);
+    return null; // Don't break standard auth
+  }
+};
+
 const LoginMutation = graphql(`
   mutation LoginMutation($email: String!, $password: String!, $cartEntityId: String) {
     login(email: $email, password: $password, guestCartEntityId: $cartEntityId) {
       customerAccessToken {
         value
+        expiresAt
       }
       customer {
         entityId
@@ -36,6 +56,7 @@ const LoginWithTokenMutation = graphql(`
     loginWithCustomerLoginJwt(jwt: $jwt, guestCartEntityId: $cartEntityId) {
       customerAccessToken {
         value
+        expiresAt
       }
       customer {
         entityId
@@ -124,6 +145,15 @@ async function loginWithPassword(credentials: unknown): Promise<User | null> {
     return null;
   }
 
+  // B2B Integration
+  const b2bToken = await loginWithB2B({
+    customerId: result.customer.entityId,
+    customerAccessToken: {
+      value: result.customerAccessToken.value,
+      expiresAt: result.customerAccessToken.expiresAt,
+    },
+  });
+
   await handleLoginCart(cartId, result.cart?.entityId);
   await clearAnonymousSession();
 
@@ -133,6 +163,7 @@ async function loginWithPassword(credentials: unknown): Promise<User | null> {
     email: result.customer.email,
     customerAccessToken: result.customerAccessToken.value,
     cartId: result.cart?.entityId,
+    ...(b2bToken && { b2bToken }),
   };
 }
 
@@ -161,6 +192,14 @@ async function loginWithJwt(credentials: unknown): Promise<User | null> {
     return null;
   }
 
+  const b2bToken = await loginWithB2B({
+    customerId: result.customer.entityId,
+    customerAccessToken: {
+      value: result.customerAccessToken.value,
+      expiresAt: result.customerAccessToken.expiresAt,
+    },
+  });
+
   await handleLoginCart(cartId, result.cart?.entityId);
   await clearAnonymousSession();
 
@@ -171,6 +210,7 @@ async function loginWithJwt(credentials: unknown): Promise<User | null> {
     customerAccessToken: result.customerAccessToken.value,
     impersonatorId,
     cartId: result.cart?.entityId,
+    ...(b2bToken && { b2bToken }),
   };
 }
 
@@ -208,6 +248,12 @@ const config = {
           ...token.user,
           customerAccessToken: user.customerAccessToken,
         };
+      }
+
+      // user can actually be undefined
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (user?.b2bToken) {
+        token.b2bToken = user.b2bToken;
       }
 
       // user can actually be undefined
@@ -267,6 +313,10 @@ const config = {
         session.user.lastName = token.user.lastName;
       }
 
+      if (token.b2bToken) {
+        session.b2bToken = token.b2bToken;
+      }
+
       return session;
     },
   },
@@ -302,7 +352,7 @@ const config = {
 
           await clearCartId();
         } catch (error) {
-          // eslint-disable-next-line no-console
+          // eslint-disable-next-console
           console.error(error);
         }
       }

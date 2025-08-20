@@ -6,12 +6,15 @@ const b2bGraphqlApiDomain = process.env.B2B_API_HOST ?? 'api-b2b.bigcommerce.com
 
 function getB2BToken() {
   const token = process.env.B2B_API_TOKEN;
+
   if (!token) throw new Error('Missing B2B API token');
+
   return token;
 }
 
 async function generate() {
   const tsconfig = join(__dirname, '../tsconfig.json');
+
   try {
     await generateSchema({
       input: `https://${b2bGraphqlApiDomain}/graphql`,
@@ -20,10 +23,13 @@ async function generate() {
       tsconfig: join(__dirname, '../tsconfig.graphql.json'),
     });
 
+    // @ts-ignore
     await generateOutput({ tsconfig });
-      
+
+    // eslint-disable-next-line no-console
     console.log('✓ B2B schema downloaded (types will be available via tadaOutputLocation)');
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error(err);
     process.exit(1);
   }
