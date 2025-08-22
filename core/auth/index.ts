@@ -12,23 +12,56 @@ import { graphql } from '~/client/graphql';
 import { clearCartId, setCartId } from '~/lib/cart';
 import { serverToast } from '~/lib/server-toast';
 
-const loginWithB2B = async ({
-  customerId,
-  customerAccessToken,
-}: {
-  customerId: number;
-  customerAccessToken: { value: string; expiresAt: string };
-}) => {
-  if (process.env.B2B_ENABLED !== 'true') return null;
+const getB2BFunctions = async () => {
+  if (process.env.B2B_ENABLED !== 'true') {
+    return {
+      loginWithB2B: async () => null,
+      fetchB2BUser: async () => null,
+    };
+  }
 
   try {
-    const { b2bClient } = await import('~/features/b2b/client');
-    return await b2bClient.loginWithB2B({ customerId, customerAccessToken });
+    const { loginWithB2B, fetchB2BUser } = await import('~/features/b2b/auth');
+    return { loginWithB2B, fetchB2BUser };
   } catch (error) {
-    console.error('🚨 [B2B LOGIN] Failed:', error);
-    return null; // Don't break standard auth
+    console.error('Failed to load B2B module:', error);
+    return {
+      loginWithB2B: async () => null,
+      fetchB2BUser: async () => null,
+    };
   }
 };
+
+// const loginWithB2B = async ({
+//   customerId,
+//   customerAccessToken,
+// }: {
+//   customerId: number;
+//   customerAccessToken: { value: string; expiresAt: string };
+// }) => {
+//   if (process.env.B2B_ENABLED !== 'true') return null;
+
+//   try {
+//     const { b2bClient } = await import('~/features/b2b/client');
+//     return await b2bClient.loginWithB2B({ customerId, customerAccessToken });
+//   } catch (error) {
+//     console.error('🚨 [B2B LOGIN] Failed:', error);
+//     return null; // Don't break standard auth
+//   }
+// };
+
+// const fetchB2BUser = async (b2bToken: string) => {
+//   if (process.env.B2B_ENABLED !== 'true') return null;
+
+//   try {
+//     const { b2bClient } = await import('~/features/b2b/client');
+//     const b2bUser = await b2bClient.getCurrentUser(b2bToken);
+//     return b2bUser;
+//   } catch (error) {
+//     console.error('🚨 [B2B USER] Failed to fetch user data:', error);
+//     return null;
+//   }
+// };
 
 const LoginMutation = graphql(`
   mutation LoginMutation($email: String!, $password: String!, $cartEntityId: String) {
@@ -144,7 +177,8 @@ async function loginWithPassword(credentials: unknown): Promise<User | null> {
     return null;
   }
 
-  // B2B Integration
+  const { loginWithB2B, fetchB2BUser } = await getB2BFunctions();
+
   const b2bToken = await loginWithB2B({
     customerId: result.customer.entityId,
     customerAccessToken: {
@@ -153,6 +187,8 @@ async function loginWithPassword(credentials: unknown): Promise<User | null> {
     },
   });
 
+  const b2bUser = b2bToken ? await fetchB2BUser(b2bToken) : null;
+    
   await handleLoginCart(cartId, result.cart?.entityId);
   await clearAnonymousSession();
 
@@ -163,6 +199,7 @@ async function loginWithPassword(credentials: unknown): Promise<User | null> {
     customerAccessToken: result.customerAccessToken.value,
     cartId: result.cart?.entityId,
     ...(b2bToken && { b2bToken }),
+    ...(b2bUser && { b2bUser }),
   };
 }
 
@@ -191,6 +228,8 @@ async function loginWithJwt(credentials: unknown): Promise<User | null> {
     return null;
   }
 
+  const { loginWithB2B, fetchB2BUser } = await getB2BFunctions();
+  
   const b2bToken = await loginWithB2B({
     customerId: result.customer.entityId,
     customerAccessToken: {
@@ -198,6 +237,8 @@ async function loginWithJwt(credentials: unknown): Promise<User | null> {
       expiresAt: result.customerAccessToken.expiresAt,
     },
   });
+
+  const b2bUser = b2bToken ? await fetchB2BUser(b2bToken) : null;
 
   await handleLoginCart(cartId, result.cart?.entityId);
   await clearAnonymousSession();
@@ -210,6 +251,7 @@ async function loginWithJwt(credentials: unknown): Promise<User | null> {
     impersonatorId,
     cartId: result.cart?.entityId,
     ...(b2bToken && { b2bToken }),
+    ...(b2bUser && { b2bUser }),
   };
 }
 
@@ -253,6 +295,12 @@ const config = {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (user?.b2bToken) {
         token.b2bToken = user.b2bToken;
+      }
+
+      // user can actually be undefined
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (user?.b2bUser) {
+        token.b2bUser = user.b2bUser;
       }
 
       // user can actually be undefined
@@ -316,6 +364,10 @@ const config = {
         session.b2bToken = token.b2bToken;
       }
 
+      if (token.b2bUser) {
+        session.b2bUser = token.b2bUser;
+      }
+      
       return session;
     },
   },

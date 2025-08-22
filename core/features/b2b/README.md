@@ -1,8 +1,17 @@
+## Features
+
+- **Conditional Loading**: B2B modules are only loaded when `B2B_ENABLED=true`
+- **Type Safety**: Full GraphQL introspection with `gql.tada` for B2B user types
+- **Error Handling**: Graceful fallbacks that don't break standard authentication
+- **Modular Architecture**: All B2B functionality contained within `/features/b2b`
+- **Session Integration**: B2B token and user data automatically available in NextAuth sessions
+
 ## INSTALLATION
 
 ### 1. Install package in `/core/features/b2b`
 
 ### 2. Update package.json scripts
+
 `core/package.json`
 ```json
   "scripts": {
@@ -16,25 +25,27 @@
   },
 ```
 
-### 3. Add B2B Login Function
+### 3. Add B2B Functions with Conditional Loading
 
 `core/auth/index.ts`
 ```typescript
-const loginWithB2B = async ({
-  customerId,
-  customerAccessToken,
-}: {
-  customerId: number;
-  customerAccessToken: { value: string; expiresAt: string };
-}) => {
-  if (process.env.B2B_ENABLED !== 'true') return null;
+const getB2BFunctions = async () => {
+  if (process.env.B2B_ENABLED !== 'true') {
+    return {
+      loginWithB2B: async () => null,
+      fetchB2BUser: async () => null,
+    };
+  }
 
   try {
-    const { b2bClient } = await import('~/features/b2b/client');
-    return await b2bClient.loginWithB2B({ customerId, customerAccessToken });
+    const { loginWithB2B, fetchB2BUser } = await import('~/features/b2b/auth');
+    return { loginWithB2B, fetchB2BUser };
   } catch (error) {
-    console.error('🚨 [B2B LOGIN] Failed:', error);
-    return null; // Don't break standard auth
+    console.error('[B2B] Failed to load B2B module:', error);
+    return {
+      loginWithB2B: async () => null,
+      fetchB2BUser: async () => null,
+    };
   }
 };
 ```
@@ -43,6 +54,9 @@ const loginWithB2B = async ({
 
 `core/auth/index.ts` (after customer validation)
 ```typescript
+  // B2B Integration
+  const { loginWithB2B, fetchB2BUser } = await getB2BFunctions();
+  
   const b2bToken = await loginWithB2B({
     customerId: result.customer.entityId,
     customerAccessToken: {
@@ -50,9 +64,11 @@ const loginWithB2B = async ({
       expiresAt: result.customerAccessToken.expiresAt,
     },
   });
+
+  const b2bUser = b2bToken ? await fetchB2BUser(b2bToken) : null;
 ```
 
-### 5. Add B2B Token to User Object
+### 5. Add B2B Token and User to User Object
 
 `core/auth/index.ts` (in return statement)
 ```typescript
@@ -62,6 +78,7 @@ return {
   customerAccessToken: result.customerAccessToken.value,
   cartId: result.cart?.entityId,
   ...(b2bToken && { b2bToken }),
+  ...(b2bUser && { b2bUser }),
 };
 ```
 
@@ -69,8 +86,12 @@ return {
 
 `core/auth/index.ts` (in JWT callback)
 ```typescript
-if (token.user?.b2bToken) {
-  newToken.b2bToken = token.user.b2bToken;
+if (user?.b2bToken) {
+  token.b2bToken = user.b2bToken;
+}
+
+if (user?.b2bUser) {
+  token.b2bUser = user.b2bUser;
 }
 ```
 
@@ -79,38 +100,13 @@ if (token.user?.b2bToken) {
 if (token.b2bToken) {
   session.b2bToken = token.b2bToken;
 }
-```
 
-### 7. Update Types
-
-`core/auth/types.ts`
-```typescript
-declare module 'next-auth' {
-  interface Session {
-    user?: User;
-    b2bToken?: string;
-  }
-
-  interface User {
-    name?: string | null;
-    email?: string | null;
-    cartId?: string | null;
-    customerAccessToken?: string;
-    impersonatorId?: string | null;
-    b2bToken?: string;
-  }
-}
-
-declare module 'next-auth/jwt' {
-  interface JWT {
-    id?: string;
-    user?: User;
-    b2bToken?: string;
-  }
+if (token.b2bUser) {
+  session.b2bUser = token.b2bUser;
 }
 ```
 
-### 8. Environment Variables
+### 7. Environment Variables
 
 `.env.local`
 ```bash
@@ -119,11 +115,17 @@ B2B_API_TOKEN=your_b2b_api_token
 ```
 
 ## Usage
-Throughout Catalyst we can access the B2B token:
+Throughout Catalyst we can access the B2B token and user data:
 
-```
+```typescript
 const session = await auth();
 if (session?.b2bToken) {
-    // TODO
+  // Access B2B token
+  console.log('B2B Token:', session.b2bToken);
+}
+
+if (session?.b2bUser) {
+  // Access B2B user data with full type safety
+  console.log('B2B User:', session.b2bUser);
 }
 ```
